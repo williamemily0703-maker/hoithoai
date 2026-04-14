@@ -18,7 +18,7 @@
         .checkbox-group label { cursor: pointer; user-select: none; background: #edf2f7; padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: 500; transition: 0.2s; }
         .checkbox-group input:checked + label { background: #3182ce; color: white; }
         
-        button { background-color: #38a169; color: white; border: none; padding: 10px 20px; font-size: 15px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.2s; margin-right: 8px; }
+        button { background-color: #38a169; color: white; border: none; padding: 10px 20px; font-size: 15px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.2s; margin-right: 8px; margin-bottom: 8px; }
         button:hover { transform: translateY(-1px); box-shadow: 0 4px 6px rgba(0,0,0,0.1); filter: brightness(1.1); }
         
         /* Practice Panel */
@@ -63,7 +63,11 @@
     <div class="controls">
         <h3>1. Nhập liệu & Chọn ngôn ngữ</h3>
         <div class="checkbox-group" id="language-selectors"></div>
+        
         <button onclick="generateTable()">Tạo Bảng Dữ Liệu</button>
+        <button onclick="exportScript()" style="background-color: #2b6cb0;">💾 Tải Script Về Máy</button>
+        <input type="file" id="import-file" style="display: none;" accept=".json" onchange="importScript(event)">
+        <button onclick="document.getElementById('import-file').click()" style="background-color: #ed8936;">📂 Nhập Script Có Sẵn</button>
 
         <div class="practice-panel" id="practice-panel">
             <div class="form-group">
@@ -105,11 +109,11 @@
         const languages = ["Tiếng Việt", "Tiếng Anh", "Tiếng Đức", "Tiếng Hàn", "Tiếng Nhật", "Tiếng Thái", "Tiếng Trung", "Tiếng Pháp", "Tiếng Tây Ban Nha", "Tiếng Hindi", "Tiếng Ả Rập", "Tiếng Ý", "Tiếng Nga", "Tiếng Filipino"];
         
         const langCodeMap = {
-    "Tiếng Việt": "vi-VN", "Tiếng Anh": "en-US", "Tiếng Đức": "de-DE", "Tiếng Hàn": "ko-KR", 
-    "Tiếng Nhật": "ja-JP", "Tiếng Thái": "th-TH", "Tiếng Trung": "zh-CN", "Tiếng Pháp": "fr-FR", 
-    "Tiếng Tây Ban Nha": "es-ES", "Tiếng Ý": "it-IT", "Tiếng Nga": "ru-RU",
-    "Tiếng Ả Rập": "ar-SA", "Tiếng Filipino": "fil-PH", "Tiếng Hindi": "hi-IN"
-};;
+            "Tiếng Việt": "vi-VN", "Tiếng Anh": "en-US", "Tiếng Đức": "de-DE", "Tiếng Hàn": "ko-KR", 
+            "Tiếng Nhật": "ja-JP", "Tiếng Thái": "th-TH", "Tiếng Trung": "zh-CN", "Tiếng Pháp": "fr-FR", 
+            "Tiếng Tây Ban Nha": "es-ES", "Tiếng Ý": "it-IT", "Tiếng Nga": "ru-RU",
+            "Tiếng Ả Rập": "ar-SA", "Tiếng Filipino": "fil-PH", "Tiếng Hindi": "hi-IN"
+        };
 
         let globalParsedData = {}; 
         let availableVoices = [];
@@ -148,6 +152,60 @@
 
             populateVoices();
             if (speechSynthesis.onvoiceschanged !== undefined) speechSynthesis.onvoiceschanged = populateVoices;
+        }
+
+        // TÍNH NĂNG MỚI: XUẤT SCRIPT
+        function exportScript() {
+            const dataToSave = {};
+            languages.forEach(lang => {
+                const checkbox = document.getElementById(`chk-${lang}`);
+                const textarea = document.getElementById(`text-${lang}`);
+                if (checkbox && textarea) {
+                    dataToSave[lang] = {
+                        checked: checkbox.checked,
+                        text: textarea.value
+                    };
+                }
+            });
+
+            const dataStr = JSON.stringify(dataToSave, null, 2);
+            const blob = new Blob([dataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "phong_luyen_am_script.json";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // TÍNH NĂNG MỚI: NHẬP SCRIPT
+        function importScript(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    languages.forEach(lang => {
+                        if (importedData[lang]) {
+                            const checkbox = document.getElementById(`chk-${lang}`);
+                            const textarea = document.getElementById(`text-${lang}`);
+                            if (checkbox) checkbox.checked = importedData[lang].checked;
+                            if (textarea) textarea.value = importedData[lang].text;
+                        }
+                    });
+                    alert("Đã nhập dữ liệu thành công! Hãy bấm 'Tạo Bảng Dữ Liệu' để bắt đầu.");
+                } catch (error) {
+                    alert("File không hợp lệ hoặc bị lỗi!");
+                }
+                // Xoá value để có thể import lại cùng 1 file nếu cần
+                event.target.value = '';
+            };
+            reader.readAsText(file);
         }
 
         function populateVoices() {
@@ -362,11 +420,10 @@
                 finalTranscript = "";
                 interimTranscript = "";
 
-                // Khởi tạo lại Recognition mỗi lần bấm thu để tránh lỗi Abort/Trôi ngôn ngữ
                 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
                 if (SpeechRecognition) {
                     recognition = new SpeechRecognition();
-                    recognition.continuous = true; // Sửa thành true để không tự ngắt
+                    recognition.continuous = true; 
                     recognition.interimResults = true;
                     recognition.lang = langCodeMap[targetLang] || 'en-US';
 
@@ -379,7 +436,7 @@
                                 currentInterim += e.results[i][0].transcript;
                             }
                         }
-                        interimTranscript = currentInterim; // Lưu tạm để tránh mất chữ cuối
+                        interimTranscript = currentInterim; 
                     };
 
                     recognition.onerror = (e) => {
@@ -398,7 +455,6 @@
                     document.getElementById(`btn-play-${index}`).style.display = 'inline-flex';
                     stream.getTracks().forEach(track => track.stop());
                     
-                    // Xử lý kết hợp Final và Interim text phòng trường hợp user bấm stop nhanh
                     let textToAnalyze = (finalTranscript + " " + interimTranscript).trim();
 
                     setTimeout(() => {
@@ -425,7 +481,7 @@
                                 processInteractiveTurn(index + 1);
                             }, 3000); 
                         }
-                    }, 500); // Giảm delay xuống vì text đã được lưu trữ an toàn
+                    }, 500); 
                 };
 
                 mediaRecorder.start();
