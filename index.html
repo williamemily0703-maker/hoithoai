@@ -225,7 +225,32 @@
             prompt += `YÊU CẦU BẮT BUỘC:\n`;
             prompt += `- Cấu trúc lời thoại phải là "Tên nhân vật: Lời thoại" (Ví dụ: Anna: Hallo!).\n`;
             prompt += `- Không thêm văn bản giải thích thừa thãi ngoài định dạng được yêu cầu dưới đây.\n`;
-            prompt += `- Hãy viết bản gốc bằng Tiếng Đức, sau đó dịch sang các ngôn ngữ: ${selectedLangs.filter(l => l !== 'Tiếng Đức').join(', ')}.\n\n`;
+            prompt += `- Hãy viết bản gốc bằng Tiếng Đức với lưu ý :"Yêu cầu:
+
+1. Giải thích rõ khái niệm dễ hiểu cho người mới, cho ví dụ thực tế nhất gần với cuộc sống sao cho dễ hiểu nhất
+2. Xây dựng một tình huống thực tế có phát sinh vấn đề hoặc khó khăn.
+3. Trong hội thoại, làm rõ:
+   - Những lỗi sai phổ biến
+   - Những tình huống bất ngờ có thể xảy ra
+   - Nguyên nhân của các vấn đề
+4. Phân tích cách xử lý từng vấn đề:
+   - Cách làm đúng
+   - Các lựa chọn khác nhau (nếu có)
+   - Ưu và nhược điểm của từng cách
+5. Đưa thêm các biến thể hoặc trường hợp đặc biệt liên quan đến chủ đề.
+6. Nếu là chủ đề có liên quan đến quy định/quy trình (ví dụ: đi tàu xe, thủ tục…), hãy mô tả:
+   - Các bước thực hiện
+   - Những lưu ý quan trọng
+7. Nếu là kỹ năng ,hãy bổ sung:
+   - Mẹo thực tế
+   - Những sai lầm người mới thường gặp
+8. Kết thúc bằng phần tóm tắt các kinh nghiệm quan trọng cần nhớ.
+9. Nếu là đồ vật thì hãy mô tả
+- Chất liệu
+- Nó dùng để làm gì
+- Cách sử dụng ra sao
+- Có cần lưu ‎ gì không
+", sau đó dịch sang các ngôn ngữ với lưu dịch sau cho tự nhiên nhất đối với ngôn ngữ được dịch: ${selectedLangs.filter(l => l !== 'Tiếng Đức').join(', ')}.\n\n`;
             
             prompt += `BẠN BẮT BUỘC PHẢI TRẢ LỜI THEO ĐÚNG CẤU TRÚC PHÂN TÁCH NÀY ĐỂ TÔI XỬ LÝ MÁY MÓC:\n\n`;
             
