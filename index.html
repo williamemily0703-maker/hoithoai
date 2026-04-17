@@ -213,11 +213,21 @@
                 return;
             }
 
-            // Đảm bảo Tiếng Đức được chọn làm gốc
-            document.getElementById('chk-Tiếng Đức').checked = true;
-            toggleLangBox('Tiếng Đức');
-
+            // Lấy danh sách ngôn ngữ người dùng đã tick chọn
             const selectedLangs = Array.from(document.querySelectorAll('.lang-check:checked')).map(cb => cb.value);
+            
+            if (selectedLangs.length === 0) {
+                alert("Vui lòng chọn ít nhất 1 ngôn ngữ!");
+                return;
+            }
+
+            // Sắp xếp: Ưu tiên ngoại ngữ lên trước, đẩy Tiếng Việt xuống cuối cùng
+            const prioritizedLangs = selectedLangs.sort((a, b) => {
+                if (a === 'Tiếng Việt') return 1;
+                if (b === 'Tiếng Việt') return -1;
+                return 0;
+            });
+
             const statusEl = document.getElementById('ai-status');
 
             // 1. Tạo "Siêu câu lệnh" (Mega Prompt) để DeepSeek xuất ra đúng định dạng
@@ -225,59 +235,26 @@
             prompt += `YÊU CẦU BẮT BUỘC:\n`;
             prompt += `- Cấu trúc lời thoại phải là "Tên nhân vật: Lời thoại" (Ví dụ: Anna: Hallo!).\n`;
             prompt += `- Không thêm văn bản giải thích thừa thãi ngoài định dạng được yêu cầu dưới đây.\n`;
-            prompt += `- Hãy viết bản gốc bằng Tiếng Đức với lưu ý :"Yêu cầu: chỉ có hội thoại nhưng trong lời hội thoại phải có:
-
-. Giải thích rõ khái niệm dễ hiểu cho người mới, cho ví dụ thực tế nhất gần với cuộc sống sao cho dễ hiểu nhất
- Một kịch bản storytelling (1000–2000 từ) theo phong cách TikTok/YouTube, có 2 người đối thoại với nhau (kiểu hỏi – đáp, trò chuyện tự nhiên).
-
-Yêu cầu:
-
-1. Cấu trúc nội dung:
-- Câu chuyện phát triển theo từng giai đoạn 
-- Mỗi giai đoạn cần có:
-  + Kỳ vọng ban đầu (nghe rất ngầu)
-  + Thực tế (có thể trái ngược)
-  + Một ví dụ/tình huống cụ thể
-  + Một bài học hoặc insight
-
-2. Dạng hội thoại:
-- 2 nhân vật nói chuyện qua lại (A – B)
-- Một người kiểu tò mò hỏi, một người kể chuyện/trải nghiệm
-- Giữ cảm giác tự nhiên như đang nói chuyện ngoài đời
-
-3. Văn phong:
-- Tự nhiên, hơi Gen Z, có chút hài hước
-- Câu ngắn, nhịp nhanh, dễ đọc (giống voice TikTok)
-- Có so sánh đời thường (deadline, crush, drama, v.v.)
-- Tránh quá học thuật
-
-4. Nội dung:
-- Thực tế, không tô hồng
-- Có yếu tố “bóc trần sự thật” của nghề/sự việc
-- Càng về sau càng căng (trách nhiệm, áp lực tăng dần)
-
-5. Cách triển khai (để đào sâu):
-- Nhân vật có thể đặt câu hỏi kiểu:
-  + “Thực ra chuyện gì đang xảy ra?”
-  + “Tại sao lại như vậy?”
-  + “Có ai liên quan không?”
-  + “Nếu làm sai thì hậu quả gì?”
-- Đi từ:
-  Hiện tượng → Nguyên nhân → Hệ quả → Bài học
-
-6. Kết:
-- Một insight lớn về nghề/sự việc
-- Kết kiểu mở hoặc có câu “đắt”
-- Có thể thêm câu kêu gọi follow/like kiểu nhẹ nhàng
-
-Yêu cầu thêm:
-- Viết mượt, có cảm xúc
-- Không lan man, không lặp ý
-", sau đó dịch sang các ngôn ngữ với lưu dịch sau cho tự nhiên nhất đối với ngôn ngữ được dịch: ${selectedLangs.filter(l => l !== 'Tiếng Đức').join(', ')}.\n\n`;
+            prompt += `- Hãy viết kịch bản cho các ngôn ngữ sau: ${prioritizedLangs.join(', ')}.\n`;
+            prompt += `Bạn hãy lấy một NGOẠI NGỮ bất kỳ trong danh sách trên làm ngôn ngữ gốc để sáng tác kịch bản (Tuyệt đối KHÔNG lấy Tiếng Việt làm gốc). Sau đó dịch sao cho tự nhiên và chuẩn văn phong bản xứ nhất sang các ngôn ngữ còn lại.\n\n`;
+            
+            prompt += `Lưu ý cho kịch bản gốc:\n"Yêu cầu: chỉ có hội thoại nhưng trong lời hội thoại phải có:\n`;
+            prompt += `. Giải thích rõ khái niệm dễ hiểu cho người mới, cho ví dụ thực tế nhất gần với cuộc sống sao cho dễ hiểu nhất\n`;
+            prompt += `Một kịch bản storytelling (1000–2000 từ) theo phong cách TikTok/YouTube, có 2 người đối thoại với nhau (kiểu hỏi – đáp, trò chuyện tự nhiên).\n\n`;
+            
+            prompt += `Yêu cầu chi tiết:\n`;
+            prompt += `1. Cấu trúc nội dung:\n- Câu chuyện phát triển theo từng giai đoạn\n- Mỗi giai đoạn cần có:\n  + Kỳ vọng ban đầu (nghe rất ngầu)\n  + Thực tế (có thể trái ngược)\n  + Một ví dụ/tình huống cụ thể\n  + Một bài học hoặc insight\n\n`;
+            prompt += `2. Dạng hội thoại:\n- 2 nhân vật nói chuyện qua lại (A – B)\n- Một người kiểu tò mò hỏi, một người kể chuyện/trải nghiệm\n- Giữ cảm giác tự nhiên như đang nói chuyện ngoài đời\n\n`;
+            prompt += `3. Văn phong:\n- Tự nhiên, hơi Gen Z, có chút hài hước\n- Câu ngắn, nhịp nhanh, dễ đọc (giống voice TikTok)\n- Có so sánh đời thường (deadline, crush, drama, v.v.)\n- Tránh quá học thuật\n\n`;
+            prompt += `4. Nội dung:\n- Thực tế, không tô hồng\n- Có yếu tố “bóc trần sự thật” của nghề/sự việc\n- Càng về sau càng căng (trách nhiệm, áp lực tăng dần)\n\n`;
+            prompt += `5. Cách triển khai (để đào sâu):\n- Nhân vật có thể đặt câu hỏi kiểu:\n  + “Thực ra chuyện gì đang xảy ra?”\n  + “Tại sao lại như vậy?”\n  + “Có ai liên quan không?”\n  + “Nếu làm sai thì hậu quả gì?”\n- Đi từ: Hiện tượng → Nguyên nhân → Hệ quả → Bài học\n\n`;
+            prompt += `6. Kết:\n- Một insight lớn về nghề/sự việc\n- Kết kiểu mở hoặc có câu “đắt”\n- Có thể thêm câu kêu gọi follow/like kiểu nhẹ nhàng\n\n`;
+            prompt += `Yêu cầu thêm:\n- Viết mượt, có cảm xúc\n- Không lan man, không lặp ý"\n\n`;
             
             prompt += `BẠN BẮT BUỘC PHẢI TRẢ LỜI THEO ĐÚNG CẤU TRÚC PHÂN TÁCH NÀY ĐỂ TÔI XỬ LÝ MÁY MÓC:\n\n`;
             
-            selectedLangs.forEach(lang => {
+            // Lặp theo mảng đã được sắp xếp ưu tiên ngoại ngữ
+            prioritizedLangs.forEach(lang => {
                 prompt += `=== ${lang} ===\n(Viết nội dung ${lang} ở đây)\n\n`;
             });
 
@@ -297,7 +274,6 @@ Yêu cầu thêm:
                 alert("Trình duyệt của bạn chặn tự động copy. Xin vui lòng cấp quyền hoặc copy thủ công nội dung.");
             }
         }
-
         // --- XỬ LÝ KẾT QUẢ DÁN TỪ DEEPSEEK VÀ TỰ ĐÓNG POPUP ---
         function processPastedResult() {
             const rawData = document.getElementById('deepseek-result').value;
