@@ -5,51 +5,68 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Học Ngoại Ngữ Chuyên Sâu với AI</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background-color: #f4f7f6; color: #2c3e50; }
-        h1 { text-align: center; color: #1a365d; margin-bottom: 30px; }
-        .container { display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 20px; }
-        .lang-box { flex: 1 1 30%; min-width: 280px; background: #fff; padding: 15px; border-radius: 10px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
-        .lang-box h3 { margin-top: 0; font-size: 16px; color: #2b6cb0; border-bottom: 2px solid #edf2f7; padding-bottom: 10px; }
-        textarea { width: 100%; height: 120px; padding: 12px; box-sizing: border-box; border: 1px solid #cbd5e1; border-radius: 6px; resize: vertical; font-family: inherit; line-height: 1.5; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background-color: #f4f7f6; color: #2c3e50; line-height: 1.5; }
+        h1 { text-align: center; color: #1a365d; margin-bottom: 30px; font-size: 24px;}
         
-        .controls { background: #fff; padding: 25px; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
-        .controls h3 { margin-top: 0; color: #2d3748; font-size: 16px; margin-bottom: 15px; }
-        .checkbox-group { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
-        .checkbox-group label { cursor: pointer; user-select: none; background: #edf2f7; padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: 500; transition: 0.2s; }
-        .checkbox-group input:checked + label { background: #3182ce; color: white; }
+        .section-card { background: #fff; padding: 25px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        .section-title { margin-top: 0; color: #2d3748; font-size: 18px; border-bottom: 2px solid #edf2f7; padding-bottom: 10px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;}
         
-        button { background-color: #38a169; color: white; border: none; padding: 10px 20px; font-size: 15px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.2s; margin-right: 8px; margin-bottom: 8px; }
-        button:hover { transform: translateY(-1px); box-shadow: 0 4px 6px rgba(0,0,0,0.1); filter: brightness(1.1); }
+        /* Module 1: AI Generator */
+        .form-group-ai { margin-bottom: 15px; }
+        .form-group-ai label { display: block; font-weight: 600; margin-bottom: 5px; font-size: 14px; }
+        .form-group-ai input[type="password"], .form-group-ai textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; box-sizing: border-box; font-family: inherit; }
+        .form-group-ai textarea { height: 60px; resize: vertical; }
         
-        /* Practice Panel */
-        .practice-panel { margin-top: 20px; padding-top: 20px; border-top: 2px dashed #cbd5e1; display: none; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; background: #ebf8ff; padding: 20px; border-radius: 10px; }
-        .practice-panel select { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; background: #fff; font-family: inherit; }
-        .practice-panel .form-group { display: flex; flex-direction: column; }
-        .practice-panel label { font-size: 13px; font-weight: bold; margin-bottom: 8px; color: #4a5568; }
+        #ai-status { margin-top: 15px; font-weight: bold; color: #2b6cb0; font-size: 14px; text-align: center; padding: 10px; background: #ebf8ff; border-radius: 8px; display: none;}
+        
+        .checkbox-group { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+        .checkbox-group label { cursor: pointer; user-select: none; background: #edf2f7; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 500; transition: 0.2s; border: 1px solid transparent; }
+        .checkbox-group input:checked + label { background: #3182ce; color: white; border-color: #2b6cb0; }
 
-        .table-container { overflow-x: auto; background: #fff; padding: 20px; border-radius: 10px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        /* Button Styles */
+        button { border: none; padding: 12px 20px; font-size: 14px; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.2s; margin-right: 8px; margin-bottom: 8px; display: inline-flex; align-items: center; gap: 5px; }
+        button:hover { transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.1); filter: brightness(1.1); }
+        button:disabled { background-color: #a0aec0 !important; cursor: not-allowed; transform: none; box-shadow: none; }
+        .btn-ai { background-color: #805ad5; color: white; width: 100%; justify-content: center; font-size: 16px; margin-top: 10px;}
+        .btn-generate { background-color: #38a169; color: white; }
+        .btn-export { background-color: #2b6cb0; color: white; }
+        .btn-import { background-color: #dd6b20; color: white; }
+
+        /* Text Input Area */
+        .container { display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 20px; }
+        .lang-box { flex: 1 1 30%; min-width: 280px; background: #fafafa; padding: 15px; border-radius: 10px; border: 1px dashed #cbd5e1; }
+        .lang-box h3 { margin-top: 0; font-size: 15px; color: #4a5568; margin-bottom: 10px; }
+        .lang-box textarea { width: 100%; height: 120px; padding: 10px; box-sizing: border-box; border: 1px solid #cbd5e1; border-radius: 6px; resize: vertical; font-family: inherit; font-size: 13px;}
+
+        /* Practice Panel */
+        .practice-panel { padding-top: 20px; border-top: 2px dashed #e2e8f0; display: none; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; background: #f0fff4; padding: 20px; border-radius: 10px; margin-top: 20px;}
+        .practice-panel select { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; background: #fff; font-family: inherit; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { font-size: 13px; font-weight: bold; margin-bottom: 8px; color: #2f855a; }
+
+        /* Table */
+        .table-container { overflow-x: auto; background: #fff; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: none;}
         table { width: 100%; border-collapse: collapse; min-width: 800px; }
-        th, td { border: 1px solid #e2e8f0; padding: 16px; text-align: left; vertical-align: top; line-height: 1.6; }
-        th { background-color: #2d3748; color: white; position: sticky; top: 0; z-index: 10; }
-        .speaker-col { font-weight: bold; color: #c53030; white-space: nowrap; width: 120px; text-align: center; }
+        th, td { border: 1px solid #e2e8f0; padding: 16px; text-align: left; vertical-align: top; }
+        th { background-color: #2d3748; color: white; position: sticky; top: 0; z-index: 10; font-size: 15px;}
+        .speaker-col { font-weight: bold; color: #c53030; white-space: nowrap; width: 120px; text-align: center; background: #fff5f5;}
         
         tbody tr { transition: 0.2s; cursor: pointer; }
         tbody tr:hover { background-color: #f7fafc; }
         tbody tr.playing { background-color: #fefcbf !important; border-left: 4px solid #d69e2e; }
         tbody tr.waiting-user { background-color: #e6fffa !important; border-left: 4px solid #38b2ac; }
         
-        /* Action Area */
-        .hidden-text { filter: blur(6px); opacity: 0.6; transition: 0.3s; user-select: none; }
+        /* Action Area (Record) */
+        .hidden-text { filter: blur(5px); opacity: 0.6; transition: 0.3s; user-select: none; }
         .hidden-text:hover { filter: blur(0px); opacity: 1; }
         .action-area { margin-top: 15px; padding-top: 15px; border-top: 1px solid #e2e8f0; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
         
-        .record-btn { background-color: #e53e3e; padding: 8px 16px; font-size: 13px; border-radius: 20px; display: inline-flex; align-items: center; }
+        .record-btn { background-color: #e53e3e; color: white; padding: 6px 12px; font-size: 12px; border-radius: 20px; display: inline-flex; margin: 0;}
         .record-btn.recording { animation: pulse 1.5s infinite; background-color: #fc8181; }
-        .play-record-btn { background-color: #4299e1; padding: 8px 16px; font-size: 13px; border-radius: 20px; display: none; }
-        .score-badge { font-weight: bold; font-size: 14px; padding: 6px 12px; border-radius: 10px; display: none; }
+        .play-record-btn { background-color: #4299e1; color: white; padding: 6px 12px; font-size: 12px; border-radius: 20px; display: none; margin: 0;}
+        .score-badge { font-weight: bold; font-size: 13px; padding: 4px 10px; border-radius: 10px; display: none; }
         
-        /* Box phản hồi chi tiết */
-        .feedback-box { width: 100%; margin-top: 10px; padding: 12px; background: #fdfefe; border: 1px dashed #cbd5e1; border-radius: 8px; font-size: 14px; display: none; }
+        .feedback-box { width: 100%; margin-top: 10px; padding: 12px; background: #fff; border: 1px dashed #cbd5e1; border-radius: 8px; font-size: 13px; display: none; }
         .word-correct { color: #276749; font-weight: bold; }
         .word-wrong { color: #c53030; text-decoration: line-through; }
         
@@ -58,24 +75,54 @@
 </head>
 <body>
 
-    <h1>🎙️ Phòng Luyện Phát Âm & Phân Vai AI</h1>
+    <h1>🚀 Nền Tảng Học Ngôn Ngữ AI Toàn Diện</h1>
 
-    <div class="controls">
-        <h3>1. Nhập liệu & Chọn ngôn ngữ</h3>
+    <div class="section-card">
+        <h2 class="section-title">🧠 Bước 1: Tạo Script Bằng DeepSeek (Popup)</h2>
+
+        <div class="form-group-ai">
+            <label>Chủ đề hội thoại (VD: Đi ăn nhà hàng, Check-in khách sạn, Lạc đường...):</label>
+            <textarea id="topic" placeholder='Ví dụ: Einchecken im Hotel mit Problemen'></textarea>
+        </div>
+
+        <label style="font-weight: 600; font-size: 14px; margin-bottom: 10px; display: block;">Chọn ngôn ngữ muốn tạo & dịch:</label>
         <div class="checkbox-group" id="language-selectors"></div>
-        
-        <button onclick="generateTable()">Tạo Bảng Dữ Liệu</button>
-        <button onclick="exportScript()" style="background-color: #2b6cb0;">💾 Tải Script Về Máy</button>
-        <input type="file" id="import-file" style="display: none;" accept=".json" onchange="importScript(event)">
-        <button onclick="document.getElementById('import-file').click()" style="background-color: #ed8936;">📂 Nhập Script Có Sẵn</button>
 
-        <div class="practice-panel" id="practice-panel">
+        <button class="btn-ai" id="startAiBtn" onclick="openDeepSeekPopup()">📋 1. Tạo Lệnh, Copy & Mở DeepSeek</button>
+        <div id="ai-status"></div>
+
+        <div id="manual-paste-area" style="display: none; margin-top: 25px; border-top: 2px dashed #cbd5e1; padding-top: 20px;">
+            <label style="font-weight: 600; color: #e53e3e; display: block; margin-bottom: 10px; font-size: 15px;">
+                👇 2. Đã copy lệnh! Dán (Ctrl+V) vào cửa sổ DeepSeek vừa mở. Sau khi có kết quả, copy và dán vào ô dưới đây:
+            </label>
+            <textarea id="deepseek-result" style="width: 100%; height: 120px; padding: 12px; border: 2px solid #3182ce; border-radius: 8px; font-family: inherit;" placeholder="Dán toàn bộ câu trả lời của DeepSeek vào đây..."></textarea>
+            <button class="btn-generate" style="width: 100%; justify-content: center; font-size: 16px; margin-top: 15px; padding: 15px;" onclick="processPastedResult()">✅ 3. Xử lý dữ liệu & Đóng DeepSeek</button>
+        </div>
+    </div>
+
+    <div class="section-card" id="script-section" style="display: none;">
+        <h2 class="section-title">📝 Bước 2: Kiểm Tra & Chỉnh Sửa Script (Tùy Chọn)</h2>
+        
+        <div style="margin-bottom: 20px;">
+            <button class="btn-generate" onclick="generatePracticeTable()">▶️ Đưa vào Phòng Luyện Tập</button>
+            <button class="btn-export" onclick="exportScript()">💾 Lưu Script Về Máy</button>
+            <input type="file" id="import-file" style="display: none;" accept=".json" onchange="importScript(event)">
+            <button class="btn-import" onclick="document.getElementById('import-file').click()">📂 Nhập Script Có Sẵn</button>
+        </div>
+
+        <div class="container" id="input-container"></div>
+    </div>
+
+    <div class="section-card" id="practice-section" style="display: none; background: #f0fff4; border-color: #9ae6b4;">
+        <h2 class="section-title" style="color: #276749;">🎙️ Bước 3: Phòng Luyện Phát Âm & Phân Vai</h2>
+        
+        <div class="practice-panel" id="practice-panel" style="display: grid;">
             <div class="form-group">
-                <label>Ngôn ngữ muốn học:</label>
+                <label>Ngôn ngữ mục tiêu:</label>
                 <select id="read-lang-select" onchange="updatePracticeUI()"></select>
             </div>
             <div class="form-group">
-                <label>Đóng vai (Luyện nói):</label>
+                <label>Đóng vai nhân vật:</label>
                 <select id="user-role-select" onchange="updatePracticeUI()">
                     <option value="none">Không (Chỉ nghe máy đọc)</option>
                 </select>
@@ -88,17 +135,15 @@
                 <label id="label-voice-2">Giọng Máy 2:</label>
                 <select id="voice-2"></select>
             </div>
-            <div class="form-group" style="grid-column: 1 / -1; flex-direction: row; gap: 15px; border-top: 1px solid #cbd5e1; padding-top: 20px; margin-top: 10px; flex-wrap: wrap;">
-                <button onclick="startInteractivePractice()" style="background-color: #d69e2e;">▶ Thực Hành (Máy hỏi - Bạn trả lời)</button>
-                <button onclick="playReviewSession()" style="background-color: #805ad5;">🎧 Nghe Lại Toàn Bộ Hội Thoại</button>
-                <button onclick="stopAll()" style="background-color: #718096;">⏹ Dừng</button>
+            <div class="form-group" style="grid-column: 1 / -1; flex-direction: row; gap: 10px; border-top: 1px solid #cbd5e1; padding-top: 15px; margin-top: 5px; flex-wrap: wrap;">
+                <button onclick="startInteractivePractice()" style="background-color: #d69e2e; color: white;">▶ Luyện Tập Đối Thoại</button>
+                <button onclick="playReviewSession()" style="background-color: #3182ce; color: white;">🎧 Nghe Toàn Bộ Đoạn</button>
+                <button onclick="stopAll()" style="background-color: #718096; color: white;">⏹ Dừng Lại</button>
             </div>
         </div>
     </div>
 
-    <div class="container" id="input-container"></div>
-
-    <div class="table-container" id="table-container" style="display: none;">
+    <div class="table-container" id="table-container">
         <table id="result-table">
             <thead><tr id="table-head"></tr></thead>
             <tbody id="table-body"></tbody>
@@ -106,7 +151,7 @@
     </div>
 
     <script>
-        const languages = ["Tiếng Việt", "Tiếng Anh", "Tiếng Đức", "Tiếng Hàn", "Tiếng Nhật", "Tiếng Thái", "Tiếng Trung", "Tiếng Pháp", "Tiếng Tây Ban Nha", "Tiếng Hindi", "Tiếng Ả Rập", "Tiếng Ý", "Tiếng Nga", "Tiếng Filipino"];
+        const languages = ["Tiếng Đức", "Tiếng Việt", "Tiếng Anh", "Tiếng Hàn", "Tiếng Nhật", "Tiếng Thái", "Tiếng Trung", "Tiếng Pháp", "Tiếng Tây Ban Nha", "Tiếng Hindi", "Tiếng Ả Rập", "Tiếng Ý", "Tiếng Nga", "Tiếng Filipino"];
         
         const langCodeMap = {
             "Tiếng Việt": "vi-VN", "Tiếng Anh": "en-US", "Tiếng Đức": "de-DE", "Tiếng Hàn": "ko-KR", 
@@ -121,71 +166,165 @@
         let isPlaying = false;
         let isInteractiveMode = false;
         let speakersList = []; 
-        
-        let mediaRecorder;
-        let audioChunks = [];
-        let userRecordings = {}; 
+        let mediaRecorder; let audioChunks = []; let userRecordings = {}; 
         let currentAudioPlayer = null; 
+        let recognition; let finalTranscript = ""; let interimTranscript = "";
         
-        let recognition;
-        let finalTranscript = "";
-        let interimTranscript = "";
+        let deepseekWindow = null; // Biến lưu trữ cửa sổ popup
 
         function init() {
             const selectorContainer = document.getElementById('language-selectors');
             const inputContainer = document.getElementById('input-container');
 
-            languages.forEach((lang, index) => {
-                const isChecked = (index === 0 || index === 1) ? 'checked' : ''; 
+            languages.forEach((lang) => {
+                const isChecked = (lang === "Tiếng Đức" || lang === "Tiếng Việt"); 
+                
                 selectorContainer.insertAdjacentHTML('beforeend', `
                     <div>
-                        <input type="checkbox" value="${lang}" class="lang-check" id="chk-${lang}" ${isChecked} style="display:none;">
+                        <input type="checkbox" value="${lang}" class="lang-check" id="chk-${lang}" ${isChecked ? 'checked' : ''} onchange="toggleLangBox('${lang}')" style="display:none;">
                         <label for="chk-${lang}">${lang}</label>
                     </div>
                 `);
 
                 const box = document.createElement('div');
                 box.className = 'lang-box';
+                box.id = `box-${lang}`;
+                box.style.display = isChecked ? 'block' : 'none';
                 box.innerHTML = `<h3>${lang}</h3><textarea id="text-${lang}" placeholder="Dán văn bản ${lang}..."></textarea>`;
                 inputContainer.appendChild(box);
             });
 
+            document.getElementById('script-section').style.display = 'block'; 
             populateVoices();
             if (speechSynthesis.onvoiceschanged !== undefined) speechSynthesis.onvoiceschanged = populateVoices;
         }
 
-        // TÍNH NĂNG MỚI: XUẤT SCRIPT
+        function toggleLangBox(lang) {
+            const checkbox = document.getElementById(`chk-${lang}`);
+            const box = document.getElementById(`box-${lang}`);
+            if (checkbox && box) box.style.display = checkbox.checked ? 'block' : 'none';
+        }
+
+        // --- TÍCH HỢP POPUP DEEPSEEK THAY VÌ API ---
+        async function openDeepSeekPopup() {
+            const topic = document.getElementById('topic').value.trim();
+            if (!topic) {
+                alert("Vui lòng nhập Chủ đề hội thoại trước khi mở DeepSeek!");
+                return;
+            }
+
+            // Đảm bảo Tiếng Đức được chọn làm gốc
+            document.getElementById('chk-Tiếng Đức').checked = true;
+            toggleLangBox('Tiếng Đức');
+
+            const selectedLangs = Array.from(document.querySelectorAll('.lang-check:checked')).map(cb => cb.value);
+            const statusEl = document.getElementById('ai-status');
+
+            // 1. Tạo "Siêu câu lệnh" (Mega Prompt) để DeepSeek xuất ra đúng định dạng
+            let prompt = `Bạn là chuyên gia viết kịch bản hội thoại thực tế. Chủ đề: "${topic}".\n\n`;
+            prompt += `YÊU CẦU BẮT BUỘC:\n`;
+            prompt += `- Cấu trúc lời thoại phải là "Tên nhân vật: Lời thoại" (Ví dụ: Anna: Hallo!).\n`;
+            prompt += `- Không thêm văn bản giải thích thừa thãi ngoài định dạng được yêu cầu dưới đây.\n`;
+            prompt += `- Hãy viết bản gốc bằng Tiếng Đức, sau đó dịch sang các ngôn ngữ: ${selectedLangs.filter(l => l !== 'Tiếng Đức').join(', ')}.\n\n`;
+            
+            prompt += `BẠN BẮT BUỘC PHẢI TRẢ LỜI THEO ĐÚNG CẤU TRÚC PHÂN TÁCH NÀY ĐỂ TÔI XỬ LÝ MÁY MÓC:\n\n`;
+            
+            selectedLangs.forEach(lang => {
+                prompt += `=== ${lang} ===\n(Viết nội dung ${lang} ở đây)\n\n`;
+            });
+
+            try {
+                // 2. Tự động Copy vào Clipboard
+                await navigator.clipboard.writeText(prompt);
+                
+                statusEl.style.display = 'block';
+                statusEl.innerHTML = `✅ Đã copy yêu cầu tự động. Hãy nhấn Ctrl + V vào ô chat của DeepSeek!`;
+
+                // 3. Mở Popup DeepSeek
+                deepseekWindow = window.open('https://chat.deepseek.com/', 'DeepSeekChat', 'width=800,height=700,left=200,top=100');
+
+                // 4. Mở khóa giao diện dán kết quả
+                document.getElementById('manual-paste-area').style.display = 'block';
+            } catch (error) {
+                alert("Trình duyệt của bạn chặn tự động copy. Xin vui lòng cấp quyền hoặc copy thủ công nội dung.");
+            }
+        }
+
+        // --- XỬ LÝ KẾT QUẢ DÁN TỪ DEEPSEEK VÀ TỰ ĐÓNG POPUP ---
+        function processPastedResult() {
+            const rawData = document.getElementById('deepseek-result').value;
+            if (!rawData.trim()) {
+                alert("Vui lòng dán toàn bộ câu trả lời của DeepSeek vào ô trống trước khi xử lý!");
+                return;
+            }
+
+            const selectedLangs = Array.from(document.querySelectorAll('.lang-check:checked')).map(cb => cb.value);
+            let currentLang = null;
+            let extractedData = {};
+
+            // Khởi tạo object rỗng cho các ngôn ngữ
+            selectedLangs.forEach(lang => extractedData[lang] = "");
+
+            // Parse text dựa trên marker "=== Tên Ngôn Ngữ ==="
+            const lines = rawData.split('\n');
+            for (let line of lines) {
+                const markerMatch = line.match(/^={3,}\s*(.*?)\s*={3,}$/); // Tìm chuỗi dạng === Tiếng Đức ===
+                
+                if (markerMatch) {
+                    const matchedLang = markerMatch[1].trim();
+                    if (selectedLangs.includes(matchedLang)) {
+                        currentLang = matchedLang;
+                        continue; // Bỏ qua dòng chứa marker
+                    }
+                }
+
+                if (currentLang) {
+                    extractedData[currentLang] += line + '\n';
+                }
+            }
+
+            // Điền dữ liệu vào các ô tương ứng
+            selectedLangs.forEach(lang => {
+                const textArea = document.getElementById(`text-${lang}`);
+                if (textArea && extractedData[lang].trim() !== "") {
+                    textArea.value = extractedData[lang].trim();
+                }
+            });
+
+            // Tự động đóng cửa sổ DeepSeek
+            if (deepseekWindow && !deepseekWindow.closed) {
+                deepseekWindow.close();
+            }
+
+            // Ẩn vùng dán thủ công, dọn dẹp và đưa vào Phòng thực hành
+            document.getElementById('manual-paste-area').style.display = 'none';
+            document.getElementById('ai-status').style.display = 'none';
+            document.getElementById('deepseek-result').value = '';
+            
+            alert("✅ Đã xử lý kịch bản thành công!");
+            generatePracticeTable();
+        }
+
         function exportScript() {
             const dataToSave = {};
             languages.forEach(lang => {
                 const checkbox = document.getElementById(`chk-${lang}`);
                 const textarea = document.getElementById(`text-${lang}`);
                 if (checkbox && textarea) {
-                    dataToSave[lang] = {
-                        checked: checkbox.checked,
-                        text: textarea.value
-                    };
+                    dataToSave[lang] = { checked: checkbox.checked, text: textarea.value };
                 }
             });
-
             const dataStr = JSON.stringify(dataToSave, null, 2);
             const blob = new Blob([dataStr], { type: "application/json" });
             const url = URL.createObjectURL(blob);
-
             const a = document.createElement("a");
-            a.href = url;
-            a.download = "phong_luyen_am_script.json";
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+            a.href = url; a.download = "kịch_bản_ai.json";
+            document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
         }
 
-        // TÍNH NĂNG MỚI: NHẬP SCRIPT
         function importScript(event) {
             const file = event.target.files[0];
             if (!file) return;
-
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
@@ -194,37 +333,16 @@
                         if (importedData[lang]) {
                             const checkbox = document.getElementById(`chk-${lang}`);
                             const textarea = document.getElementById(`text-${lang}`);
-                            if (checkbox) checkbox.checked = importedData[lang].checked;
+                            if (checkbox) { checkbox.checked = importedData[lang].checked; toggleLangBox(lang); }
                             if (textarea) textarea.value = importedData[lang].text;
                         }
                     });
-                    alert("Đã nhập dữ liệu thành công! Hãy bấm 'Tạo Bảng Dữ Liệu' để bắt đầu.");
-                } catch (error) {
-                    alert("File không hợp lệ hoặc bị lỗi!");
-                }
-                // Xoá value để có thể import lại cùng 1 file nếu cần
+                    document.getElementById('script-section').style.display = 'block';
+                    alert("Đã tải dữ liệu thành công!");
+                } catch (error) { alert("File không hợp lệ!"); }
                 event.target.value = '';
             };
             reader.readAsText(file);
-        }
-
-        function populateVoices() {
-            availableVoices = speechSynthesis.getVoices();
-            const voiceSelects = [document.getElementById('voice-1'), document.getElementById('voice-2')];
-            if(availableVoices.length === 0) return;
-
-            voiceSelects.forEach(select => {
-                const currentVal = select.value;
-                select.innerHTML = '';
-                availableVoices.forEach((voice, index) => {
-                    const option = document.createElement('option');
-                    option.value = index;
-                    let name = voice.name.includes('Microsoft') ? "⭐ " + voice.name : voice.name; 
-                    option.textContent = `${name} (${voice.lang})`;
-                    select.appendChild(option);
-                });
-                if (currentVal) select.value = currentVal;
-            });
         }
 
         function parseDialogue(text) {
@@ -234,50 +352,41 @@
             for (let i = 0; i < lines.length; i++) {
                 let line = lines[i].trim();
                 if (!line) continue;
-                if (/^(Cảnh|Szene|Scene|场景)/i.test(line)) continue;
-
-                const match = line.match(/^([^:：]{1,30})[:：](.*)$/);
+                if (/^(Cảnh|Szene|Scene|场景|\*\*)/i.test(line)) continue;
+                const match = line.match(/^([^:：*]{1,30})[:：](.*)$/);
                 if (match) {
-                    if (currentSpeaker) result.push({ speaker: currentSpeaker, text: currentText.trim() });
-                    currentSpeaker = match[1].trim();
+                    if (currentSpeaker) result.push({ speaker: currentSpeaker.replace(/\*/g,'').trim(), text: currentText.trim() });
+                    currentSpeaker = match[1].replace(/\*/g,'').trim();
                     currentText = match[2].trim();
                 } else {
                     if (currentSpeaker) currentText += (currentText ? " " : "") + line;
                 }
             }
-            if (currentSpeaker) result.push({ speaker: currentSpeaker, text: currentText.trim() });
+            if (currentSpeaker) result.push({ speaker: currentSpeaker.replace(/\*/g,'').trim(), text: currentText.trim() });
             return result;
         }
 
-        function generateTable() {
+        function generatePracticeTable() {
             stopAll();
             const checkboxes = document.querySelectorAll('.lang-check:checked');
             const selectedLangs = Array.from(checkboxes).map(cb => cb.value);
 
             if (selectedLangs.length === 0) { alert("Vui lòng chọn ít nhất 1 ngôn ngữ!"); return; }
 
-            globalParsedData = {};
-            let maxTurns = 0;
-            speakersList = [];
-            userRecordings = {}; 
+            globalParsedData = {}; let maxTurns = 0; speakersList = []; userRecordings = {}; 
 
             selectedLangs.forEach(lang => {
                 const text = document.getElementById(`text-${lang}`).value;
                 const turns = parseDialogue(text);
                 globalParsedData[lang] = turns;
                 if (turns.length > maxTurns) maxTurns = turns.length;
-                
                 turns.forEach(t => { if(!speakersList.includes(t.speaker) && speakersList.length < 2) speakersList.push(t.speaker); });
             });
 
             const thead = document.getElementById('table-head');
             thead.innerHTML = '<th class="speaker-col">Nhân Vật</th>';
-            
-            const readLangSelect = document.getElementById('read-lang-select');
-            readLangSelect.innerHTML = '';
-            
-            const roleSelect = document.getElementById('user-role-select');
-            roleSelect.innerHTML = '<option value="none">Không (Chỉ nghe máy đọc)</option>';
+            const readLangSelect = document.getElementById('read-lang-select'); readLangSelect.innerHTML = '';
+            const roleSelect = document.getElementById('user-role-select'); roleSelect.innerHTML = '<option value="none">Không (Chỉ nghe máy đọc)</option>';
 
             selectedLangs.forEach(lang => {
                 thead.insertAdjacentHTML('beforeend', `<th>${lang}</th>`);
@@ -286,18 +395,11 @@
 
             speakersList.forEach(spk => { roleSelect.insertAdjacentHTML('beforeend', `<option value="${spk}">Đóng vai: ${spk}</option>`); });
 
-            const tbody = document.getElementById('table-body');
-            tbody.innerHTML = '';
+            const tbody = document.getElementById('table-body'); tbody.innerHTML = '';
 
             for (let i = 0; i < maxTurns; i++) {
-                const tr = document.createElement('tr');
-                tr.id = `row-${i}`;
-                
-                tr.onclick = (e) => {
-                    if(e.target.tagName !== 'BUTTON' && !e.target.closest('.action-area')) {
-                        readSingleTurn(i);
-                    }
-                };
+                const tr = document.createElement('tr'); tr.id = `row-${i}`;
+                tr.onclick = (e) => { if(e.target.tagName !== 'BUTTON' && !e.target.closest('.action-area')) readSingleTurn(i); };
                 
                 let speakerName = "";
                 for (let lang of selectedLangs) {
@@ -314,16 +416,16 @@
                             <div class="action-area" style="display:none;"></div>
                         </td>`);
                 });
-
                 tbody.appendChild(tr);
             }
 
+            document.getElementById('practice-section').style.display = 'block';
             document.getElementById('table-container').style.display = 'block';
-            document.getElementById('practice-panel').style.display = 'grid';
             
             if(speakersList[0]) document.getElementById('label-voice-1').innerText = `Giọng ${speakersList[0]}:`;
             if(speakersList[1]) document.getElementById('label-voice-2').innerText = `Giọng ${speakersList[1]}:`;
 
+            document.getElementById('practice-section').scrollIntoView({ behavior: 'smooth' });
             updatePracticeUI(); 
         }
 
@@ -331,19 +433,15 @@
             const userRole = document.getElementById('user-role-select').value;
             const targetLang = document.getElementById('read-lang-select').value;
 
-            const rows = document.querySelectorAll('#table-body tr');
-            rows.forEach((tr, index) => {
+            document.querySelectorAll('#table-body tr').forEach((tr, index) => {
                 const speaker = tr.querySelector('.speaker-col').getAttribute('data-speaker');
-                const cells = tr.querySelectorAll('.lang-cell');
-                
-                cells.forEach(cell => {
+                tr.querySelectorAll('.lang-cell').forEach(cell => {
                     const lang = cell.getAttribute('data-lang');
                     const textDiv = cell.querySelector('.text-content');
                     const actionArea = cell.querySelector('.action-area');
                     
                     textDiv.classList.remove('hidden-text');
-                    actionArea.style.display = 'none';
-                    actionArea.innerHTML = '';
+                    actionArea.style.display = 'none'; actionArea.innerHTML = '';
 
                     if (userRole !== 'none' && speaker === userRole && lang === targetLang) {
                         textDiv.classList.add('hidden-text');
@@ -359,152 +457,109 @@
             });
         }
 
+        function populateVoices() {
+            availableVoices = speechSynthesis.getVoices();
+            if(availableVoices.length === 0) return;
+            [document.getElementById('voice-1'), document.getElementById('voice-2')].forEach(select => {
+                const currentVal = select.value; select.innerHTML = '';
+                availableVoices.forEach((voice, index) => {
+                    const option = document.createElement('option'); option.value = index;
+                    option.textContent = `${voice.name.includes('Microsoft') ? "⭐ " : ""}${voice.name} (${voice.lang})`;
+                    select.appendChild(option);
+                });
+                if (currentVal) select.value = currentVal;
+            });
+        }
+
         function analyzeSpeechAndGenerateHTML(originalText, spokenText) {
-            if (!spokenText || spokenText.trim() === "") return { score: 0, html: "<em>Không nghe thấy âm thanh. Vui lòng thử lại.</em>", raw: "" };
-            
+            if (!spokenText || spokenText.trim() === "") return { score: 0, html: "<em>Không nghe thấy âm thanh.</em>", raw: "" };
             const cleanOrgWords = originalText.split(/\s+/);
             const cleanSpkWords = spokenText.toLowerCase().replace(/[.,!?()（）"']/g, "").split(/\s+/);
-
-            let matchCount = 0;
-            let diffHtml = "";
+            let matchCount = 0; let diffHtml = "";
 
             cleanOrgWords.forEach(orgWord => {
                 const cleanWord = orgWord.toLowerCase().replace(/[.,!?()（）"']/g, "");
-                if(!cleanWord) {
-                    diffHtml += orgWord + " ";
-                    return;
-                }
-
+                if(!cleanWord) { diffHtml += orgWord + " "; return; }
                 let found = false;
                 for(let i = 0; i < cleanSpkWords.length; i++) {
-                    if(cleanSpkWords[i] === cleanWord) {
-                        found = true;
-                        cleanSpkWords[i] = null; 
-                        break;
-                    }
+                    if(cleanSpkWords[i] === cleanWord) { found = true; cleanSpkWords[i] = null; break; }
                 }
-
-                if(found) {
-                    matchCount++;
-                    diffHtml += `<span class="word-correct">${orgWord}</span> `;
-                } else {
-                    diffHtml += `<span class="word-wrong">${orgWord}</span> `;
-                }
+                if(found) { matchCount++; diffHtml += `<span class="word-correct">${orgWord}</span> `; } 
+                else { diffHtml += `<span class="word-wrong">${orgWord}</span> `; }
             });
 
             let validWordCount = cleanOrgWords.filter(w => w.replace(/[.,!?()（）"']/g, "") !== "").length;
             let score = validWordCount === 0 ? 0 : Math.round((matchCount / validWordCount) * 100);
-            
             return { score: score > 100 ? 100 : score, html: diffHtml.trim(), raw: spokenText };
         }
 
         async function toggleRecord(index, event) {
             if(event) event.stopPropagation(); 
-
             const btn = document.getElementById(`btn-rec-${index}`);
             const targetLang = document.getElementById('read-lang-select').value;
-            const originalText = globalParsedData[targetLang][index].text.replace(/\\(.*?\\)|\\（.*?\\）/g, "");
+            const originalText = globalParsedData[targetLang][index].text.replace(/\([^)]*\)|（[^）]*）|\*.*?\*/g, "");
             
             if (mediaRecorder && mediaRecorder.state === "recording") {
-                mediaRecorder.stop();
-                if(recognition) recognition.stop();
-                btn.classList.remove('recording');
-                btn.innerHTML = '🔴 Thu lại';
-                return;
+                mediaRecorder.stop(); if(recognition) recognition.stop();
+                btn.classList.remove('recording'); btn.innerHTML = '🔴 Thu lại'; return;
             }
 
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                mediaRecorder = new MediaRecorder(stream);
-                audioChunks = [];
-                finalTranscript = "";
-                interimTranscript = "";
+                mediaRecorder = new MediaRecorder(stream); audioChunks = []; finalTranscript = ""; interimTranscript = "";
 
                 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
                 if (SpeechRecognition) {
-                    recognition = new SpeechRecognition();
-                    recognition.continuous = true; 
-                    recognition.interimResults = true;
+                    recognition = new SpeechRecognition(); recognition.continuous = true; recognition.interimResults = true;
                     recognition.lang = langCodeMap[targetLang] || 'en-US';
-
                     recognition.onresult = (e) => {
                         let currentInterim = "";
                         for (let i = e.resultIndex; i < e.results.length; ++i) {
-                            if (e.results[i].isFinal) {
-                                finalTranscript += e.results[i][0].transcript + " ";
-                            } else {
-                                currentInterim += e.results[i][0].transcript;
-                            }
+                            if (e.results[i].isFinal) finalTranscript += e.results[i][0].transcript + " ";
+                            else currentInterim += e.results[i][0].transcript;
                         }
                         interimTranscript = currentInterim; 
                     };
-
-                    recognition.onerror = (e) => {
-                        console.warn("Lỗi nhận diện giọng nói: ", e.error);
-                    };
-
                     recognition.start();
                 }
 
-                mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-
+                mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
                 mediaRecorder.onstop = () => {
-                    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-                    userRecordings[index] = URL.createObjectURL(audioBlob); 
-                    
+                    userRecordings[index] = URL.createObjectURL(new Blob(audioChunks)); 
                     document.getElementById(`btn-play-${index}`).style.display = 'inline-flex';
                     stream.getTracks().forEach(track => track.stop());
                     
                     let textToAnalyze = (finalTranscript + " " + interimTranscript).trim();
-
                     setTimeout(() => {
                         let analysis = analyzeSpeechAndGenerateHTML(originalText, textToAnalyze);
-                        
                         const scoreBadge = document.getElementById(`score-${index}`);
                         const feedbackBox = document.getElementById(`feedback-${index}`);
+                        scoreBadge.style.display = 'inline-block'; feedbackBox.style.display = 'block';
                         
-                        scoreBadge.style.display = 'inline-block';
-                        feedbackBox.style.display = 'block';
+                        if(analysis.score >= 80) { scoreBadge.style.background = '#c6f6d5'; scoreBadge.style.color = '#22543d'; scoreBadge.innerText = `${analysis.score}%`; }
+                        else if(analysis.score >= 50) { scoreBadge.style.background = '#fefcbf'; scoreBadge.style.color = '#744210'; scoreBadge.innerText = `${analysis.score}%`; }
+                        else { scoreBadge.style.background = '#fed7d7'; scoreBadge.style.color = '#742a2a'; scoreBadge.innerText = `${analysis.score}%`; }
                         
-                        if(analysis.score >= 80) { scoreBadge.style.background = '#c6f6d5'; scoreBadge.style.color = '#22543d'; scoreBadge.innerText = `Tuyệt vời: ${analysis.score}%`; }
-                        else if(analysis.score >= 50) { scoreBadge.style.background = '#fefcbf'; scoreBadge.style.color = '#744210'; scoreBadge.innerText = `Khá tốt: ${analysis.score}%`; }
-                        else { scoreBadge.style.background = '#fed7d7'; scoreBadge.style.color = '#742a2a'; scoreBadge.innerText = `Sai nhiều: ${analysis.score}%`; }
+                        feedbackBox.innerHTML = `<div><strong>Nghe được:</strong> <span style="color:#4a5568;">"${analysis.raw}"</span></div><div><strong>Lỗi:</strong> ${analysis.html}</div>`;
                         
-                        feedbackBox.innerHTML = `
-                            <div style="margin-bottom: 8px;"><strong>Hệ thống nghe được:</strong> <span style="color:#4a5568;">"${analysis.raw || "Không rõ tiếng"}"</span></div>
-                            <div><strong>Chẩn đoán lỗi:</strong> ${analysis.html}</div>
-                        `;
-                        
-                        if(isInteractiveMode) {
-                            setTimeout(() => {
-                                document.getElementById(`row-${index}`).classList.remove('waiting-user');
-                                processInteractiveTurn(index + 1);
-                            }, 3000); 
-                        }
+                        if(isInteractiveMode) setTimeout(() => { document.getElementById(`row-${index}`).classList.remove('waiting-user'); processInteractiveTurn(index + 1); }, 3000); 
                     }, 500); 
                 };
 
-                mediaRecorder.start();
-                btn.classList.add('recording');
-                btn.innerHTML = '⬛ Dừng';
-            } catch (err) { alert("Lỗi Micro: Vui lòng cho phép quyền truy cập Micro trên trình duyệt!"); }
+                mediaRecorder.start(); btn.classList.add('recording'); btn.innerHTML = '⬛ Dừng';
+            } catch (err) { alert("Lỗi Micro!"); }
         }
 
         function playUserAudio(index, event) {
             if(event) event.stopPropagation();
             if (currentAudioPlayer) currentAudioPlayer.pause();
-            if (userRecordings[index]) {
-                currentAudioPlayer = new Audio(userRecordings[index]);
-                currentAudioPlayer.play();
-            }
+            if (userRecordings[index]) { currentAudioPlayer = new Audio(userRecordings[index]); currentAudioPlayer.play(); }
         }
 
         function stopAll() {
-            window.speechSynthesis.cancel();
-            if (currentAudioPlayer) currentAudioPlayer.pause();
-            isPlaying = false;
-            isInteractiveMode = false;
-            document.querySelectorAll('#table-body tr').forEach(tr => { tr.classList.remove('playing', 'waiting-user'); });
+            window.speechSynthesis.cancel(); if (currentAudioPlayer) currentAudioPlayer.pause();
+            isPlaying = false; isInteractiveMode = false;
+            document.querySelectorAll('#table-body tr').forEach(tr => tr.classList.remove('playing', 'waiting-user'));
             if(recognition) recognition.stop();
         }
 
@@ -514,26 +569,17 @@
             const turn = globalParsedData[selectedLang][index];
             if(!turn || !turn.text || turn.text === "-") return;
 
-            const v1Index = document.getElementById('voice-1').value;
-            const v2Index = document.getElementById('voice-2').value;
-            let selectedVoiceIndex = (speakersList.length > 1 && turn.speaker === speakersList[1]) ? v2Index : v1Index; 
-
+            let selectedVoiceIndex = (speakersList.length > 1 && turn.speaker === speakersList[1]) ? document.getElementById('voice-2').value : document.getElementById('voice-1').value; 
             document.getElementById(`row-${index}`).classList.add('playing');
 
-            let textToSpeak = turn.text.replace(/\\(.*?\\)|\\（.*?\\）/g, "").trim();
+            let textToSpeak = turn.text.replace(/\([^)]*\)|（[^）]*）|\*.*?\*/g, "").trim();
             currentUtterance = new SpeechSynthesisUtterance(textToSpeak);
             if(availableVoices[selectedVoiceIndex]) currentUtterance.voice = availableVoices[selectedVoiceIndex];
-            
             currentUtterance.onend = () => document.getElementById(`row-${index}`).classList.remove('playing');
             window.speechSynthesis.speak(currentUtterance);
         }
 
-        function startInteractivePractice() {
-            stopAll();
-            isPlaying = true;
-            isInteractiveMode = true;
-            processInteractiveTurn(0);
-        }
+        function startInteractivePractice() { stopAll(); isPlaying = true; isInteractiveMode = true; processInteractiveTurn(0); }
 
         function processInteractiveTurn(index) {
             if (!isPlaying) return;
@@ -541,7 +587,7 @@
             const dataArray = globalParsedData[selectedLang];
             const userRole = document.getElementById('user-role-select').value;
             
-            if (index >= dataArray.length) { stopAll(); alert("Chúc mừng! Bạn đã hoàn thành bài thực hành."); return; }
+            if (index >= dataArray.length) { stopAll(); alert("Hoàn thành bài thực hành!"); return; }
 
             document.querySelectorAll('#table-body tr').forEach(tr => tr.classList.remove('playing', 'waiting-user'));
             const currentRow = document.getElementById(`row-${index}`);
@@ -554,13 +600,9 @@
                 currentRow.classList.add('waiting-user');
             } else {
                 currentRow.classList.add('playing');
-                let textToSpeak = turn.text.replace(/\\(.*?\\)|\\（.*?\\）/g, "").trim();
+                let textToSpeak = turn.text.replace(/\([^)]*\)|（[^）]*）|\*.*?\*/g, "").trim();
                 currentUtterance = new SpeechSynthesisUtterance(textToSpeak);
-                
-                let v1 = document.getElementById('voice-1').value;
-                let v2 = document.getElementById('voice-2').value;
-                let voiceIndex = (speakersList.length > 1 && turn.speaker === speakersList[1]) ? v2 : v1; 
-                
+                let voiceIndex = (speakersList.length > 1 && turn.speaker === speakersList[1]) ? document.getElementById('voice-2').value : document.getElementById('voice-1').value; 
                 if(availableVoices[voiceIndex]) currentUtterance.voice = availableVoices[voiceIndex];
 
                 currentUtterance.onend = () => processInteractiveTurn(index + 1);
@@ -572,7 +614,6 @@
         function playReviewSession(index = 0) {
             if(index === 0) { stopAll(); isPlaying = true; isInteractiveMode = false; }
             if (!isPlaying) return;
-            
             const selectedLang = document.getElementById('read-lang-select').value;
             const dataArray = globalParsedData[selectedLang];
             const userRole = document.getElementById('user-role-select').value;
@@ -586,20 +627,14 @@
             const turn = dataArray[index];
             if(!turn || turn.text === "-") { playReviewSession(index + 1); return; }
 
-            if (turn.speaker === userRole) {
-                if (userRecordings[index]) {
-                    currentAudioPlayer = new Audio(userRecordings[index]);
-                    currentAudioPlayer.onended = () => playReviewSession(index + 1);
-                    currentAudioPlayer.play();
-                } else {
-                    playReviewSession(index + 1);
-                }
+            if (turn.speaker === userRole && userRecordings[index]) {
+                currentAudioPlayer = new Audio(userRecordings[index]);
+                currentAudioPlayer.onended = () => playReviewSession(index + 1);
+                currentAudioPlayer.play();
             } else {
-                let textToSpeak = turn.text.replace(/\\(.*?\\)|\\（.*?\\）/g, "").trim();
+                let textToSpeak = turn.text.replace(/\([^)]*\)|（[^）]*）|\*.*?\*/g, "").trim();
                 currentUtterance = new SpeechSynthesisUtterance(textToSpeak);
-                let v1 = document.getElementById('voice-1').value;
-                let v2 = document.getElementById('voice-2').value;
-                let voiceIndex = (speakersList.length > 1 && turn.speaker === speakersList[1]) ? v2 : v1; 
+                let voiceIndex = (speakersList.length > 1 && turn.speaker === speakersList[1]) ? document.getElementById('voice-2').value : document.getElementById('voice-1').value; 
                 if(availableVoices[voiceIndex]) currentUtterance.voice = availableVoices[voiceIndex];
 
                 currentUtterance.onend = () => playReviewSession(index + 1);
