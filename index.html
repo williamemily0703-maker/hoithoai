@@ -71,6 +71,49 @@
         .word-wrong { color: #c53030; text-decoration: line-through; }
         
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+
+        /* --- Floating Mic Styles --- */
+        .floating-mic-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 28px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            cursor: pointer;
+            z-index: 9999;
+            transition: transform 0.3s ease;
+        }
+        .floating-mic-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Modal Cấu hình ban đầu */
+        .ai-config-modal {
+            display: none; 
+            position: fixed; 
+            top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.5); 
+            z-index: 10000;
+            justify-content: center; 
+            align-items: center;
+        }
+        .ai-config-content {
+            background: #fff; 
+            padding: 25px; 
+            border-radius: 12px; 
+            width: 300px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        .ai-config-content h3 { margin-top: 0; color: #2d3748; }
+        .ai-config-content select { width: 100%; padding: 10px; margin-top: 10px; margin-bottom: 20px; border-radius: 8px; border: 1px solid #cbd5e1; }
     </style>
 </head>
 <body>
@@ -150,6 +193,32 @@
         </table>
     </div>
 
+    <div class="floating-mic-btn" onclick="openAIConfig()">🎙️</div>
+
+    <div class="ai-config-modal" id="aiConfigModal">
+        <div class="ai-config-content">
+            <h3>Thiết lập Trợ lý AI</h3>
+            
+            <label style="font-weight: bold; font-size: 13px;">Ngôn ngữ muốn nói chuyện:</label>
+            <select id="ai-live-lang">
+                <option value="vi">Tiếng Việt</option>
+                <option value="en">Tiếng Anh</option>
+                <option value="de">Tiếng Đức</option>
+                <option value="zh">Tiếng Trung</option>
+                <option value="ar">Tiếng Ả Rập</option>
+            </select>
+
+            <label style="font-weight: bold; font-size: 13px;">Giọng Trợ lý:</label>
+            <select id="ai-live-voice">
+                </select>
+
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button onclick="closeAIConfig()" style="background: #e2e8f0; color: #4a5568; margin: 0;">Hủy</button>
+                <button onclick="startAILive()" style="background: #3182ce; color: #fff; margin: 0;">Khởi động</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const languages = ["Tiếng Đức", "Tiếng Việt", "Tiếng Anh", "Tiếng Hàn", "Tiếng Nhật", "Tiếng Thái", "Tiếng Trung", "Tiếng Pháp", "Tiếng Tây Ban Nha", "Tiếng Hindi", "Tiếng Ả Rập", "Tiếng Ý", "Tiếng Nga", "Tiếng Filipino"];
         
@@ -170,7 +239,7 @@
         let currentAudioPlayer = null; 
         let recognition; let finalTranscript = ""; let interimTranscript = "";
         
-        let deepseekWindow = null; // Biến lưu trữ cửa sổ popup
+        let deepseekWindow = null; 
 
         function init() {
             const selectorContainer = document.getElementById('language-selectors');
@@ -205,7 +274,7 @@
             if (checkbox && box) box.style.display = checkbox.checked ? 'block' : 'none';
         }
 
-        // --- TÍCH HỢP POPUP DEEPSEEK THAY VÌ API ---
+        // --- TÍCH HỢP POPUP DEEPSEEK ---
         async function openDeepSeekPopup() {
             const topic = document.getElementById('topic').value.trim();
             if (!topic) {
@@ -213,7 +282,6 @@
                 return;
             }
 
-            // Lấy danh sách ngôn ngữ người dùng đã tick chọn
             const selectedLangs = Array.from(document.querySelectorAll('.lang-check:checked')).map(cb => cb.value);
             
             if (selectedLangs.length === 0) {
@@ -221,7 +289,6 @@
                 return;
             }
 
-            // Sắp xếp: Ưu tiên ngoại ngữ lên trước, đẩy Tiếng Việt xuống cuối cùng
             const prioritizedLangs = selectedLangs.sort((a, b) => {
                 if (a === 'Tiếng Việt') return 1;
                 if (b === 'Tiếng Việt') return -1;
@@ -230,7 +297,6 @@
 
             const statusEl = document.getElementById('ai-status');
 
-            // 1. Tạo "Siêu câu lệnh" (Mega Prompt) để DeepSeek xuất ra đúng định dạng
             let prompt = `Bạn là chuyên gia viết kịch bản hội thoại thực tế. Chủ đề: "${topic}".\n\n`;
             prompt += `YÊU CẦU BẮT BUỘC:\n`;
             prompt += `- Cấu trúc lời thoại phải là "Tên nhân vật: Lời thoại" (Ví dụ: Anna: Hallo!).\n`;
@@ -253,28 +319,22 @@
             
             prompt += `BẠN BẮT BUỘC PHẢI TRẢ LỜI THEO ĐÚNG CẤU TRÚC PHÂN TÁCH NÀY ĐỂ TÔI XỬ LÝ MÁY MÓC:\n\n`;
             
-            // Lặp theo mảng đã được sắp xếp ưu tiên ngoại ngữ
             prioritizedLangs.forEach(lang => {
                 prompt += `=== ${lang} ===\n(Viết nội dung ${lang} ở đây)\n\n`;
             });
 
             try {
-                // 2. Tự động Copy vào Clipboard
                 await navigator.clipboard.writeText(prompt);
-                
                 statusEl.style.display = 'block';
                 statusEl.innerHTML = `✅ Đã copy yêu cầu tự động. Hãy nhấn Ctrl + V vào ô chat của DeepSeek!`;
-
-                // 3. Mở Popup DeepSeek
                 deepseekWindow = window.open('https://chat.deepseek.com/', 'DeepSeekChat', 'width=800,height=700,left=200,top=100');
-
-                // 4. Mở khóa giao diện dán kết quả
                 document.getElementById('manual-paste-area').style.display = 'block';
             } catch (error) {
                 alert("Trình duyệt của bạn chặn tự động copy. Xin vui lòng cấp quyền hoặc copy thủ công nội dung.");
             }
         }
-        // --- XỬ LÝ KẾT QUẢ DÁN TỪ DEEPSEEK VÀ TỰ ĐÓNG POPUP ---
+
+        // --- XỬ LÝ KẾT QUẢ DÁN TỪ DEEPSEEK ---
         function processPastedResult() {
             const rawData = document.getElementById('deepseek-result').value;
             if (!rawData.trim()) {
@@ -286,19 +346,17 @@
             let currentLang = null;
             let extractedData = {};
 
-            // Khởi tạo object rỗng cho các ngôn ngữ
             selectedLangs.forEach(lang => extractedData[lang] = "");
 
-            // Parse text dựa trên marker "=== Tên Ngôn Ngữ ==="
             const lines = rawData.split('\n');
             for (let line of lines) {
-                const markerMatch = line.match(/^={3,}\s*(.*?)\s*={3,}$/); // Tìm chuỗi dạng === Tiếng Đức ===
+                const markerMatch = line.match(/^={3,}\s*(.*?)\s*={3,}$/); 
                 
                 if (markerMatch) {
                     const matchedLang = markerMatch[1].trim();
                     if (selectedLangs.includes(matchedLang)) {
                         currentLang = matchedLang;
-                        continue; // Bỏ qua dòng chứa marker
+                        continue; 
                     }
                 }
 
@@ -307,7 +365,6 @@
                 }
             }
 
-            // Điền dữ liệu vào các ô tương ứng
             selectedLangs.forEach(lang => {
                 const textArea = document.getElementById(`text-${lang}`);
                 if (textArea && extractedData[lang].trim() !== "") {
@@ -315,12 +372,10 @@
                 }
             });
 
-            // Tự động đóng cửa sổ DeepSeek
             if (deepseekWindow && !deepseekWindow.closed) {
                 deepseekWindow.close();
             }
 
-            // Ẩn vùng dán thủ công, dọn dẹp và đưa vào Phòng thực hành
             document.getElementById('manual-paste-area').style.display = 'none';
             document.getElementById('ai-status').style.display = 'none';
             document.getElementById('deepseek-result').value = '';
@@ -664,6 +719,43 @@
                 currentUtterance.onend = () => playReviewSession(index + 1);
                 currentUtterance.onerror = () => stopAll();
                 window.speechSynthesis.speak(currentUtterance);
+            }
+        }
+
+        // --- CÁC HÀM CHO CỬA SỔ AI LIVE DẠNG POPUP ---
+        function openAIConfig() {
+            document.getElementById('aiConfigModal').style.display = 'flex';
+            populateAIVoices();
+        }
+
+        function closeAIConfig() {
+            document.getElementById('aiConfigModal').style.display = 'none';
+        }
+
+        function populateAIVoices() {
+            const voiceSelect = document.getElementById('ai-live-voice');
+            voiceSelect.innerHTML = '';
+            availableVoices.forEach((voice, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = voice.name;
+                voiceSelect.appendChild(option);
+            });
+        }
+
+        function startAILive() {
+            const selectedLang = document.getElementById('ai-live-lang').value;
+            const selectedVoiceIndex = document.getElementById('ai-live-voice').value;
+            
+            closeAIConfig();
+
+            const baseUrl = "https://aistudio.google.com/live?model=gemini-3.1-flash-live-preview";
+            const windowFeatures = "width=450,height=650,left=800,top=100,resizable=yes,scrollbars=yes,status=no,location=no,toolbar=no,menubar=no";
+            
+            const popup = window.open(baseUrl, 'GeminiLiveWindow', windowFeatures);
+
+            if (!popup || popup.closed || typeof popup.closed === 'undefined') {
+                alert("⚠️ Trình duyệt của bạn đang chặn hiển thị Popup. Vui lòng cho phép trang web này mở cửa sổ mới!");
             }
         }
 
